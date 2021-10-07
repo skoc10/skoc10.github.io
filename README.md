@@ -1,0 +1,1 @@
+# selmankoc_notes
