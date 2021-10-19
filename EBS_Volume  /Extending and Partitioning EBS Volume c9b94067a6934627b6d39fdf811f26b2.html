@@ -1,0 +1,680 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Extending and Partitioning EBS Volume  </title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.highlight-orange {
+	color: rgba(200, 112, 34, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.highlight-yellow {
+	color: rgba(181, 126, 51, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(252, 237, 231, 1);
+}
+.highlight-yellow_background {
+	background: rgba(245, 241, 229, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 1);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 1);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.block-color-orange {
+	color: rgba(200, 112, 34, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.block-color-yellow {
+	color: rgba(181, 126, 51, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(252, 237, 231, 1);
+}
+.block-color-yellow_background {
+	background: rgba(245, 241, 229, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 1);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 1);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(244, 231, 202, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="1a4ffec5-ccc7-4927-ab83-66d655fd27db" class="page sans"><header><img class="page-cover-image" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/1.jpeg" style="object-position:center 50%"/><h1 class="page-title">Extending and Partitioning EBS Volume  </h1></header><div class="page-body"><p id="cf41cd0f-356c-4801-a47f-151c43a39ccd" class="">Purpose of the this hands-on training is to teach the students how to add or attach an EBS (Elastic Block Storage) volume on an AWS instance, how to extend and resize volumes, and how to create partitions in volumes on running Amazon Linux 2 EC2 instances.</p><p id="b8fcc640-76cb-4680-8c40-b9c18e18dc77" class="">
+</p><figure id="c9b94067-a693-4627-b6d3-9fdf811f26b2" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_20.49.06.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_20.49.06.png"/></a></figure><p id="11916a94-2e7a-41a9-9377-437cbbf1ab41" class="">
+</p><p id="d63dd7a4-68be-4dbd-acdc-60109d786b43" class="">At the end of the this hands-on training, students will be able to;</p><ul id="bdaa1ab4-a979-411e-b42e-a16b816470a1" class="bulleted-list"><li style="list-style-type:disc">understand what is the difference between root volume and EBS Volume.</li></ul><ul id="45a526e3-107c-4610-ab7f-225da515c2ec" class="bulleted-list"><li style="list-style-type:disc">list volumes to show current status of primary (root) and additional volumes</li></ul><ul id="c31e390b-0461-4773-b284-451d4dca047a" class="bulleted-list"><li style="list-style-type:disc">demonstrate their knowledge on how to create EBS volume.</li></ul><ul id="7525e85f-0387-4d04-b2c7-9af4ba77812f" class="bulleted-list"><li style="list-style-type:disc">create mounting point on EC2 instances.</li></ul><ul id="5bdd0c71-a653-4eb5-8e94-f7a28a1c9386" class="bulleted-list"><li style="list-style-type:disc">partition volume on EC2 instances.</li></ul><ul id="21f9263e-6dfd-45df-bdb5-bdc02c40870c" class="bulleted-list"><li style="list-style-type:disc">resize the volume or partitions on the new EBS volumes.</li></ul><ul id="a794225f-4c98-4503-b4ed-709dc1f7acae" class="bulleted-list"><li style="list-style-type:disc">understand how to auto-mount EBS volumes and partitions after reboots.</li></ul><h3 id="8b1ccdd8-cf23-4be0-9999-500b7c5c3104" class=""><strong>Outline</strong></h3><p id="3e0f0314-1af8-4294-b434-575700a3ac4c" class="">1 - Extend EBS Volume without Partitioning</p><p id="13478ced-166c-4d60-9fa1-6c4498f5d400" class="">2 - Extend EBS Volume with Partitioning</p><p id="4dfd41c4-c2e5-4757-98ae-abbfdbbf9b9c" class="">3 - Auto-mount EBS Volumes and Partitions on Reboot</p><p id="e8104f4f-fc16-4cc2-94a7-a41071f7e2d6" class="">
+</p><h2 id="2a390091-b893-423e-87b5-248538138394" class="">1 - EXTEND EBS VOLUME WITHOUT PARTITIONING</h2><ul id="dc69e4c0-9d1d-4cb9-8e48-f45dd6e38c26" class="bulleted-list"><li style="list-style-type:disc">launch an instance from aws console in &quot;us-east-1a&quot; AZ.</li></ul><ul id="74f93b78-783c-49a6-8510-6123537c6332" class="bulleted-list"><li style="list-style-type:disc">check volumes which volumes attached to instance.</li></ul><ul id="b2d08d9c-93cf-4653-b250-3399dacee7cd" class="bulleted-list"><li style="list-style-type:disc">only root volume should be listed<figure id="05448142-7ab3-4633-a4ed-271c79e65af8" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.38.44.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.38.44.png"/></a></figure><p id="ede801e5-b6d6-4622-9ba5-df5ba7ab2383" class="">
+</p><p id="018f227d-5612-49cf-aba0-75468d27f806" class=""><code><mark class="highlight-red"><strong>lsblk</strong></mark></code><mark class="highlight-red"><strong>    </strong></mark>to check volumes which volumes attached to instance.</p><figure id="be630d9c-33f1-4d03-b493-33446829e4b2" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_21.17.14.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_21.17.14.png"/></a></figure><h3 id="64fa72f8-b977-468e-9260-53e6b8877bb4" class="">a. <strong> Create new Volume</strong></h3><ul id="58ee08ad-4071-490c-9a14-5b4d74b4a524" class="bulleted-list"><li style="list-style-type:circle">create a new volume in the same AZ &quot;us-east-1&quot; with the instance from AWS console &quot;10 GB&quot; for this demo.</li></ul><ul id="bfe4f5fc-1cc5-4bb3-a552-7491abfe8be1" class="bulleted-list"><li style="list-style-type:circle">attach the new volume from aws console, then list block storages again.</li></ul><ul id="4cc2182f-542f-4c12-9385-17d836c119d6" class="bulleted-list"><li style="list-style-type:circle">root volume and secondary volume should be listed</li></ul></li></ul><figure id="3331bc19-a8f3-4f2f-8e57-e41e91380592" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_21.15.30.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-16_at_21.15.30.png"/></a></figure><p id="552b1b53-a921-4fcb-b504-f81d947d2afa" class="">
+</p><figure id="5d070e39-5f9b-4e63-b704-1ce0cf13bd7e" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.58.15.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.58.15.png"/></a></figure><p id="29e8f2c6-829b-4e22-b3d1-ae01f1c4749e" class="">
+</p><figure id="dbe05241-7bb5-4f94-badd-61c4c9bb01e9" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.59.46.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_13.59.46.png"/></a></figure><p id="5612893a-e65e-4ef0-9908-d5d38750edc8" class="">
+</p><h3 id="2553bd9e-3536-4491-8e3d-5837521e6efc" class="">b. <strong> Mounting Volume</strong></h3><ul id="3024cdf3-21d9-4c9a-8f2a-d70dfadea3f1" class="bulleted-list"><li style="list-style-type:disc">check if the attached volume is already formatted or not and has data on it.</li></ul><p id="5b029a15-c7db-4a40-8885-ad70a46072b8" class=""><code>sudo file -s /dev/xvdf</code>  </p><figure id="78d44728-74cf-4dec-ac6b-97b470649655" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.04.34.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.04.34.png"/></a></figure><ul id="d8076099-1579-4f8f-8e99-45f855bcd0ed" class="bulleted-list"><li style="list-style-type:disc">if not formatted, format the new volume</li></ul><p id="45171afa-bb57-42bc-82b5-f30d7100e4e5" class=""><code>sudo mkfs -t ext4 /dev/xvdf</code></p><ul id="3888e173-a5b7-4e8b-ada7-fbea7a96a2a3" class="bulleted-list"><li style="list-style-type:disc">check the format of the volume again after formatting</li></ul><p id="59ec54a9-768a-4cdd-b269-59692ddcc962" class=""><code>sudo file -s /dev/xvdf</code></p><ul id="b95b3d41-d208-4efa-b446-a0a7737b36e3" class="bulleted-list"><li style="list-style-type:disc">create a mounting point path for new volume (volume-1)</li></ul><p id="d94b9593-e62e-4e7c-addf-cf4dc1ff2813" class=""><code>sudo mkdir /mnt/mp1</code></p><ul id="d200fcf9-1d43-4678-816c-6e4bbff0c1a6" class="bulleted-list"><li style="list-style-type:disc">mount the new volume to the mounting point path</li></ul><p id="12a26184-554d-4fec-a633-1310d6dfdfbf" class=""><code>sudo mount /dev/xvdf /mnt/mp1/</code></p><ul id="e9f39e99-ec46-41f9-9875-491ca57c143b" class="bulleted-list"><li style="list-style-type:disc">check if the attached volume is mounted to the mounting point path</li></ul><p id="ba6b7ad4-5fca-4d2d-869a-d1825831659c" class=""><code>lsblk</code></p><figure id="88a6c378-abce-415e-a684-56d972100760" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.14.02.png"><img style="width:432px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.14.02.png"/></a></figure><ul id="99bfc586-bf11-4f5b-9dc2-dce16d387eb5" class="bulleted-list"><li style="list-style-type:disc">show the available space, on the mounting point path</li></ul><p id="da1df9d2-4d86-435d-b9b8-c05e1dc02af7" class=""><code>df -h</code></p><figure id="a1969fb7-ce10-4120-ae05-9b21f56a7f3b" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.15.57.png"><img style="width:432px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.15.57.png"/></a></figure><ul id="a6ba1a37-7594-496e-ad49-e2bcddd65d88" class="bulleted-list"><li style="list-style-type:disc">check if there is data on it or not.</li></ul><p id="062eb68c-2672-4c48-8450-d7ce041a16c0" class=""><code>ls  /mnt/mp1/</code></p><ul id="decd86a2-97a6-4e8d-a4ef-db4c858c9f97" class="bulleted-list"><li style="list-style-type:disc">if there is no data on it, create a new file to show persistence in later steps</li></ul><p id="d10d264c-e9d3-4604-b8a5-62f29143267a" class=""><code>cd /mnt/mp1
+sudo touch hello.txt
+ls</code></p><figure id="92fb1845-8198-45d8-85ca-8de3b674a375" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.18.30.png"><img style="width:240px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.18.30.png"/></a></figure><p id="392ea135-4ac1-447a-8d72-a50ebeaedb30" class="">
+</p><h3 id="5da1d7a4-da66-4fb4-b66a-a7da23dbc27e" class=""><strong>c.  Enlarge the new volume (volume-1) in AWS console and modify from terminal</strong></h3><ul id="f58f0091-ae12-4354-9785-a0f61112eade" class="bulleted-list"><li style="list-style-type:disc">modify the new volume in aws console, and enlarge capacity from 10GB to 12GB .<figure id="2d62b8c2-c09c-47e6-a8a4-87f63710d64e" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.25.50.png"><img style="width:528px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.25.50.png"/></a></figure></li></ul><ul id="7209a8c3-95e7-4c12-a3e3-4dd808276190" class="bulleted-list"><li style="list-style-type:disc">check if the attached volume is showing the new capacity</li></ul><p id="80547692-570c-4fc6-9b6e-ecf9b32cdc51" class=""><code>lsblk</code></p><figure id="a7299236-6e03-453b-a23c-92e74756c684" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.27.57.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.27.57.png"/></a></figure><ul id="3b87381f-9daa-4d09-a367-c2222285b31c" class="bulleted-list"><li style="list-style-type:disc">show the real capacity used currently at mounting path, old capacity should be shown.</li></ul><p id="5979e372-50ac-49a9-80d0-df4d22d398cd" class=""><code>df -h</code></p><figure id="a0ae5b59-fbc5-469f-ad19-1a72b9a70e54" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.28.57.png"><img style="width:432px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.28.57.png"/></a></figure><ul id="2f0f5bef-571b-42a1-97db-eaeaa3c7e43b" class="bulleted-list"><li style="list-style-type:disc">resize the file system on the new volume to cover all available space.</li></ul><p id="6d0ca0a0-d4b7-4208-b042-ee7fa1f42caa" class=""><code>sudo resize2fs /dev/xvdf</code></p><figure id="f889c22b-d1ce-4f96-9174-1c086fe419dd" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.31.02.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.31.02.png"/></a></figure><ul id="3b7debb3-936e-4598-89d0-28361497ad0a" class="bulleted-list"><li style="list-style-type:disc">show the real capacity used currently at mounting path, new capacity should reflect the modified volume size.</li></ul><p id="0f044b43-049a-431f-b8c7-a589f2faafd5" class=""><code>df -h</code></p><figure id="e4c96816-3c22-4dd4-97f4-51c1f7844b63" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.31.50.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.31.50.png"/></a></figure><ul id="064cf7e0-4fd7-464b-8aef-557c1d7b119e" class="bulleted-list"><li style="list-style-type:disc">show that the data still persists on the newly enlarged volume.</li></ul><p id="f6cfadac-18f7-440e-afbc-159c2add94fb" class=""><code>ls /mnt/mp1/</code></p><figure id="cc1c952d-9454-4379-9ed5-80330f2aef2d" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.32.21.png"><img style="width:336px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.32.21.png"/></a></figure><p id="339e9c5c-0e16-4c60-82c7-366f22cff4e4" class="">
+</p><h3 id="3176b767-12a2-4663-998c-564196acf968" class="">d. <strong> Rebooting Instance</strong></h3><ul id="fbbf195a-c176-456d-a453-7f9d90e8d838" class="bulleted-list"><li style="list-style-type:disc">show that mounting point path will be gone when instance rebooted</li></ul><p id="a5e57e48-af7d-409a-a0fb-fdffe04a0ca5" class=""><code>sudo reboot now</code></p><figure id="42f98ab5-f10b-4a01-8a7a-86f60a242f5a" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.35.04.png"><img style="width:1354px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.35.04.png"/></a></figure><ul id="c76bf98c-5591-42b6-87a2-7bcdc430c495" class="bulleted-list"><li style="list-style-type:disc">show the new volume is still attached, but not mounted</li></ul><p id="1284d7c7-942c-4470-ba48-ea60d8f0e77b" class=""><code>lsblk</code></p><figure id="6e3fd1e2-72ba-4bc0-a428-333d44ac920d" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.35.51.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.35.51.png"/></a></figure><ul id="3eb53ace-82fc-468f-b18c-dd2db48cf1c7" class="bulleted-list"><li style="list-style-type:disc">check if the attached volume is &quot;already formatted&quot; or not and has data on it.</li></ul><p id="57d47a44-90a1-4501-82ff-340a02c45274" class=""><code>sudo file -s /dev/xvdf</code></p><figure id="37d5959d-c2d3-492b-b7f1-1b7cf733a6b3" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.37.34.png"><img style="width:1408px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.37.34.png"/></a></figure><ul id="479d1e6d-461c-4c30-992e-97894bd0c90e" class="bulleted-list"><li style="list-style-type:disc">mount the new volume to the mounting point path</li></ul><p id="e7c08c85-07a7-42a8-a1df-365ee8475964" class=""><code>sudo mount /dev/xvdf /mnt/mp1/</code></p><ul id="272ae129-ff1d-4290-84e0-c3fb82609d46" class="bulleted-list"><li style="list-style-type:disc">show the used and available capacity is same as the disk size.</li></ul><p id="15ccf118-b9ad-4df1-a665-9612206bbf75" class=""><code>lsblk
+df -h</code></p><figure id="f31e6137-b7f6-46ba-b674-b44b0103a8b7" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.39.26.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.39.26.png"/></a></figure><ul id="98af348c-73a9-46dd-97e0-05f93a7a7bea" class="bulleted-list"><li style="list-style-type:disc">if there is data on it, check if the data still persists.</li></ul><p id="3e4c8eda-cdbb-4878-95f0-aec3fdccb23e" class=""><code>ls  /mnt/mp1/</code></p><figure id="3fe64428-a148-4c0a-9aa8-be8c3fbc3b46" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.40.15.png"><img style="width:336px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.40.15.png"/></a></figure><p id="3e02d3f9-5df0-4621-bc83-b921b1cad28c" class="">
+</p><h2 id="6d043bc0-8e04-4827-85e9-0337488c6d3f" class=""><strong>2 - EXTEND EBS VOLUME WITH PARTITIONING</strong></h2><ul id="a08bfa04-68d4-4755-bf56-105fd19bf820" class="bulleted-list"><li style="list-style-type:disc"><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/recognize-expanded-volume-linux.html</a></li></ul><ul id="404894cd-ffb6-4eec-8db6-8ee9cfe1afd7" class="bulleted-list"><li style="list-style-type:disc"><a href="https://www.tecmint.com/fdisk-commands-to-manage-linux-disk-partitions/">https://www.tecmint.com/fdisk-commands-to-manage-linux-disk-partitions/</a></li></ul><ul id="63816dc7-a8bd-40cd-b97f-2bc4cf8010f7" class="bulleted-list"><li style="list-style-type:disc">list volumes to show current status, primary (root) and secondary volumes should be listed</li></ul><p id="c51cb874-c268-4b85-9884-def0c0018212" class=""><code>lsblk</code></p><ul id="3ea02b52-8a7c-4ccf-9f76-e6c06cd32be7" class="bulleted-list"><li style="list-style-type:disc">show the used and available capacities related with volumes</li></ul><p id="e2a51c78-8d45-407b-a11b-e0b350493fb4" class=""><code>df -h</code></p><h3 id="0aac11aa-cfca-46f0-ae0d-4ebd759c4e69" class="">a. <strong> Create new volume</strong></h3><ul id="3684bb81-641b-4851-a9c9-82d3840d1db6" class="bulleted-list"><li style="list-style-type:disc">create tertiary volume (5 GB for this demo) in the same AZ &quot;us-east-1a&quot; with the instance on aws console</li></ul><ul id="6596d2d5-a8cb-4788-a6e7-f6a362884ccf" class="bulleted-list"><li style="list-style-type:disc">attach the new volume from aws console, then list volumes again.<figure id="b9c1631a-baf9-41e9-b3cb-a774b253182d" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.47.28.png"><img style="width:576px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.47.28.png"/></a></figure></li></ul><ul id="00cf5d39-964e-494e-8350-1b92915d97cb" class="bulleted-list"><li style="list-style-type:disc">primary (root), secondary and tertiary volumes should be listed</li></ul><p id="a7d57880-aa9c-40ad-8e7a-c4ccd91fecfb" class=""><code>lsblk</code></p><figure id="46b7d729-d9a6-4437-9229-0aa403b91b58" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.48.23.png"><img style="width:432px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.48.23.png"/></a></figure><ul id="c55f5cad-403e-4b91-b7c1-d7b22a2edb5b" class="bulleted-list"><li style="list-style-type:disc">show the used and available capacities related with volumes</li></ul><p id="6a4a743d-ad03-4cb4-804d-9cf7879dbb39" class=""><code>df -h</code></p><figure id="48f41c5e-634b-4f9f-923f-361c3b37af55" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.50.09.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_14.50.09.png"/></a></figure><ul id="55f5fc03-c68d-4e01-a255-63e30879062e" class="bulleted-list"><li style="list-style-type:disc">show the current partitions... use &quot;fdisk -l /dev/xvda&quot; for specific partition</li></ul><p id="bfc06365-8d81-4318-8075-c47e4734f3af" class=""><code>sudo fdisk -l</code></p><h3 id="6f6109b4-2d15-423f-823c-7111e0dfae66" class="">b. <strong> Make partition-1</strong></h3><ul id="f645fdc1-e95d-4c57-9c64-160ac9954466" class="bulleted-list"><li style="list-style-type:disc">check all available fdisk commands and using &quot;m&quot;.</li></ul><p id="9ac0f989-bfc7-4bee-b8e8-3491cc007fc3" class=""><code>sudo fdisk /dev/xvdg
+
+ n -&gt; add new partition 
+ p -&gt; primary
+ Partition number: 1
+ First sector: default - use Enter to select default
+ Last sector: +2G</code></p><figure id="4ea25409-d4b9-47e5-9378-71f334d10887" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.13.29.png"><img style="width:1400px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.13.29.png"/></a></figure><p id="340de790-feda-4869-827d-b027ef8f59df" class=""><code>
+ n -&gt; add new partition 
+ p -&gt; primary
+ Partition number: 2
+ First sector: default - use Enter to select default
+ Last sector: default - use Enter to select default
+ w -&gt; write partition table</code></p><figure id="37666ebc-3669-4908-a475-0bb3fef719e5" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.16.41.png"><img style="width:1368px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.16.41.png"/></a></figure><p id="da4d596a-94f9-461a-af19-feaf07d3dfd6" class="">
+</p><ul id="f16ac598-af9e-4009-bd13-aada80369ec7" class="bulleted-list"><li style="list-style-type:disc">format the new partitions</li></ul><p id="f46bd011-499b-46ec-ac0b-024402b6f57b" class=""><code>sudo mkfs -t ext4 /dev/xvdg1
+sudo mkfs -t ext4 /dev/xvdg2</code></p><ul id="94085b65-9715-4d1d-a19e-67b043715f17" class="bulleted-list"><li style="list-style-type:disc">create a mounting point path for new volume</li></ul><p id="fe604336-92e1-45f1-9cb8-4813e6a4e14a" class=""><code>sudo mkdir /mnt/mp2
+sudo mkdir /mnt/mp3</code></p><ul id="10c57d13-fe0a-4150-8e2a-a16e493b56f6" class="bulleted-list"><li style="list-style-type:disc">mount the new volume to the mounting point path</li></ul><p id="d685370b-9de2-44d8-be52-48ad8e9bcd39" class=""><code>sudo mount /dev/xvdg1 /mnt/mp2/
+sudo mount /dev/xvdg2 /mnt/mp3/</code></p><ul id="14608bbb-6e7a-412e-a778-ee02c8009332" class="bulleted-list"><li style="list-style-type:disc">list volumes to show current status, all volumes and partittions should be listed</li></ul><p id="8a23f745-c103-4718-a7b4-c2f0a30d7e98" class=""><code>lsblk</code></p><figure id="ab59b12d-5e4e-47ed-93c5-9eed38a576f9" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.20.04.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.20.04.png"/></a></figure><ul id="325055e9-165d-4b1e-8b98-ca7c062c64d4" class="bulleted-list"><li style="list-style-type:disc">show the used and available capacities related with volumes and partitions</li></ul><p id="3d78e481-09db-47fc-8854-6722a43fbd5f" class=""><code>df -h</code></p><figure id="663a3c96-3538-4895-93de-01ae5ff5f71d" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.21.44.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.21.44.png"/></a></figure><ul id="c749af6c-6821-4bc6-9826-6df0c9ffeff4" class="bulleted-list"><li style="list-style-type:disc">if there is no data on it, create a new file to show persistence in later steps</li></ul><p id="0b75792f-fbca-49c3-b6ab-40f3fff80170" class=""><code>sudo touch /mnt/mp3/helloguys.txt
+ls  /mnt/mp3/</code></p><figure id="e0b99e69-98f5-42cd-9a12-57b0acad7dd3" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.23.09.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.23.09.png"/></a></figure><h3 id="64bde49d-9acf-41bd-bffc-0ee015be7530" class=""><strong>c.  Enlarge capacity</strong></h3><ul id="f8cf3230-c1d6-4d2b-96c4-9c04bcaa8dbd" class="bulleted-list"><li style="list-style-type:disc">modify the new (3rd) volume in aws console, and enlarge capacity 1 GB more (from 5GB to 6GB for this demo).<figure id="fba8a677-b005-49f3-9edd-2fee8bf72b5c" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.25.09.png"><img style="width:624px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.25.09.png"/></a></figure></li></ul><ul id="1f57c9e4-5934-4097-a11e-7cbbf6e5e4e8" class="bulleted-list"><li style="list-style-type:disc">check if the attached volume is showing the new capacity</li></ul><p id="bdf8265a-faea-4d78-886a-252927b2daaa" class=""><code>lsblk</code></p><figure id="5d043d53-2739-4e35-97ed-a8b792b05d9c" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.26.04.png"><img style="width:432px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.26.04.png"/></a></figure><ul id="5baea8b7-5e50-4a32-a3fc-3b588aaa82f9" class="bulleted-list"><li style="list-style-type:disc">show the real capacity used currently at mounting path, old capacity should be shown.</li></ul><p id="24e19a29-63e0-47f3-9338-daec0b646e09" class=""><code>df -h</code></p><figure id="3e1a9ef3-b81c-44bb-97f0-0b40d26dc959" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.27.00.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.27.00.png"/></a></figure><ul id="87a62c08-ee3e-4f75-afb0-685f26783170" class="bulleted-list"><li style="list-style-type:disc">extend the partition 2 and occupy all newly avaiable space. Warning for space !!!!!!</li></ul><p id="59db14d9-eda7-4c5a-901c-ef37d878dba9" class=""><code>sudo growpart /dev/xvdg 2</code></p><figure id="7e5fcfa9-9861-4b90-8f3d-d53973014bcf" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.28.02.png"><img style="width:672px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.28.02.png"/></a></figure><ul id="653d7115-b7ad-42db-8cda-74aadc187e2f" class="bulleted-list"><li style="list-style-type:disc">show the real capacity used currently at mounting path, updated capacity should be shown.</li></ul><p id="5f900953-9e5e-4ec3-88ab-48bc745feba4" class=""><code>lsblk</code></p><figure id="fdff96be-9293-4d2e-9617-865ea838ea09" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.29.15.png"><img style="width:480px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.29.15.png"/></a></figure><ul id="29573788-0ae4-4943-bf3e-a8c08cec1189" class="bulleted-list"><li style="list-style-type:disc">resize and extend the FILE System.</li></ul><p id="42fa9ba5-9075-4487-aaf1-ececb848a069" class=""><code>sudo resize2fs /dev/xvdg2</code></p><figure id="f7233c06-5ad1-4402-a65e-bb2efc5dac45" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.30.28.png"><img style="width:1334px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.30.28.png"/></a></figure><ul id="5d582c5d-3bbb-4cc2-be27-7acbe54eddd7" class="bulleted-list"><li style="list-style-type:disc">show the newly created file to show persistence</li></ul><p id="aa347c12-282e-4b78-a666-bcde64943694" class=""><code>ls  /mnt/mp3/</code></p><figure id="4603dd22-0e42-4ef6-9606-d82edfa8758e" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.31.05.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.31.05.png"/></a></figure><ul id="50e3a48c-4263-45ef-80da-557b70f51723" class="bulleted-list"><li style="list-style-type:disc">reboot and show that configuration is gone</li></ul><p id="7cbaefc9-0223-494c-9118-fd6fc08006db" class=""><code>sudo reboot now</code></p><figure id="58bf0408-688d-4428-a7d3-6d5326181f7e" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.45.00.png"><img style="width:576px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.45.00.png"/></a></figure><p id="8fdff4a5-fde6-4ae6-a9d3-da6c01f9d7e5" class="">
+</p><h2 id="429976ec-d477-4d41-8e4a-db794425b4fe" class=""><strong>3 - AUTOMOUNT EBS VOLUMES AND PARTITIONS ON REBOOT</strong></h2><ul id="34348bf9-9afc-43f8-aa6d-51ca7ac779f2" class="bulleted-list"><li style="list-style-type:disc">back up the /etc/fstab file.</li></ul><p id="4fcf596e-3e6c-4ca3-8164-027dd5e75acb" class=""><code>sudo cp /etc/fstab /etc/fstab.bak</code></p><ul id="4ebe637c-ef88-4cb5-95a2-c05790b9c567" class="bulleted-list"><li style="list-style-type:disc">open /etc/fstab file and</li></ul><p id="4d06b53f-2adb-4a1e-b26b-a32e8c62f79b" class=""><code>sudo nano /etc/fstab</code></p><ul id="fed856da-9488-43cd-98b3-b05fa78d37fc" class="bulleted-list"><li style="list-style-type:disc">add the following info to the existing.(UUID&#x27;s can also be used)</li></ul><p id="c068d913-432f-44aa-a3dd-12b0e0fbb18b" class=""><code> /dev/xvdf       mnt/mp1   ext4    defaults,nofail        0       0
+ /dev/xvdg1      mnt/mp2   ext4  defaults,nofail        0       0
+ /dev/xvdg2      mnt/mp3   ext4  defaults,nofail        0       0</code></p><figure id="f8016a87-866a-4fef-9a9e-3bd419499ba9" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.36.43.png"><img style="width:1430px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.36.43.png"/></a></figure><ul id="d98a3a44-cb08-4e93-ab2e-5a854d245543" class="bulleted-list"><li style="list-style-type:disc">reboot and show that configuration exists (NOTE)</li></ul><p id="f719f2d8-6af7-4c24-ae84-b479ff91762d" class=""><code>sudo reboot now</code></p><figure id="d191390a-288d-4fc0-b0c3-8f50d134bfc6" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.38.23.png"><img style="width:1406px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.38.23.png"/></a></figure><ul id="2c1e04f0-0d62-4eb5-a235-94656d9b4d0e" class="bulleted-list"><li style="list-style-type:disc">list volumes to show current status, all volumes and partitions should be listed</li></ul><p id="0504d2a8-33b8-427d-90a8-17e426797774" class=""><code>lsblk</code></p><figure id="499be034-15cb-4f9d-8d4e-c742cdcacf67" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.39.50.png"><img style="width:576px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.39.50.png"/></a></figure><ul id="2d52a7e3-db04-4c72-9841-4eb8ad6add9e" class="bulleted-list"><li style="list-style-type:disc">show the used and available capacities related with volumes and partitions</li></ul><p id="dbefb8cb-ae54-410b-95c1-0813893791f5" class=""><code>df -h</code></p><figure id="01dc388d-8687-4df6-9582-439fd9588a75" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.40.37.png"><img style="width:576px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.40.37.png"/></a></figure><ul id="f991850e-ab56-4f0d-9552-638302631326" class="bulleted-list"><li style="list-style-type:disc">if there is data on it, check if the data still persists.</li></ul><p id="0a3e6aab-26bd-455e-a68b-c276ce870b17" class=""><code>ls  /mnt/mp1/
+ls  /mnt/mp3/</code></p><figure id="4bea27e8-f91d-451b-85a1-11528297a598" class="image"><a href="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.41.20.png"><img style="width:384px" src="Extending%20and%20Partitioning%20EBS%20Volume%20c9b94067a6934627b6d39fdf811f26b2/Screen_Shot_2021-10-17_at_15.41.20.png"/></a></figure><h3 id="559a5ca2-2f33-4332-83a9-eebdaa186fcb" class=""><strong>NOTE: You can use &quot;sudo mount -a&quot; to mount volumes and partitions after editing fstab file without rebooting.</strong></h3><p id="3aca1154-055b-4345-bd36-3c92973ef932" class="">
+</p></div></article></body></html>
