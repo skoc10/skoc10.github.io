@@ -1,0 +1,727 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>Linux Commands For DevOps</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	text-indent: -1.7em;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+}
+
+.simple-table-header {
+	background: rgb(247, 246, 243);
+	color: black;
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(145, 145, 142, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(187, 132, 108, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(215, 129, 58, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 148, 51, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(108, 155, 125, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(91, 151, 189, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(167, 130, 195, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(205, 116, 159, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(225, 111, 100, 1);
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="06b1dca7-6aac-4d88-a792-b31cbd439abf" class="page sans"><header><img class="page-cover-image" src="Linux%20Commands%20For%20DevOps%2006b1dca76aac4d88a792b31cbd439abf/1614862171.png" style="object-position:center 47.699999999999996%"/><h1 class="page-title">Linux Commands For DevOps</h1></header><div class="page-body"><p id="80555ed8-3698-495e-949b-9784ab517843" class="">
+</p><h2 id="fa873659-9d00-40d4-9ae8-a4f9cee647ff" class=""><span style="border-bottom:0.05em solid"><strong>Linux Basic commands</strong></span></h2><p id="666f19a9-1715-4e53-82f3-87b09a090a60" class="">
+</p><p id="caa5ed34-8202-45b0-8c28-c89eb4efc4c8" class=""><mark class="highlight-red"><strong>date</strong></mark>                             Show the current date and time</p><p id="08dd779b-5bd1-4c42-82e7-55330fd6ec24" class="">
+</p><p id="a4a4a507-bda0-4390-ac9b-9d2d923bbb00" class=""><mark class="highlight-red"><strong>cal</strong></mark>                                Show this month&#x27;s calendar</p><p id="2bf3b50c-78fc-46b2-9b79-914a400dd373" class="">
+</p><p id="f25c70ac-c858-4d53-a730-a29c3a5054d2" class=""><mark class="highlight-red"><strong>uptime</strong></mark>                         Show current uptime</p><p id="428398c8-0ade-49eb-b11c-8ae001d36321" class="">
+</p><p id="6cfd28f2-3e2d-4450-80bc-f742dbea723a" class=""><mark class="highlight-red"><strong>whoami</strong></mark>                       Who you are logged in as</p><p id="356b802f-d2cb-42cf-bf09-0762909aeba6" class="">
+</p><p id="43c102f5-b9e6-4749-a91f-3f43ae26fa38" class=""><mark class="highlight-red"><strong>finger</strong></mark>                           Display information about user</p><p id="77927ac9-02d3-4804-927c-bfd524756ad7" class="">
+</p><p id="39db342c-7751-495b-9e29-d5073948cd73" class=""><mark class="highlight-red"><strong>users / id</strong></mark><mark class="highlight-red">                    </mark> Shows user information</p><p id="90bf0f47-edac-4981-9d61-2dcec1701e3c" class="">
+</p><p id="301a9f74-9443-4d79-965b-598313be4312" class=""><mark class="highlight-red"><strong>man</strong></mark>                             Shows manual of command</p><p id="a675e757-cd5f-41c5-a2b5-f25788ab87d9" class="">
+</p><p id="2bdc2e47-cede-46b7-b966-1142d118111f" class=""><mark class="highlight-red"><strong>username</strong></mark>                   Shows your user name</p><p id="92409dfe-ab96-4c27-9e28-9918df0efe1a" class="">
+</p><p id="ef7b8fec-0691-48be-bcb2-9bc2d75c6045" class=""><mark class="highlight-red"><strong>who / w</strong></mark><mark class="highlight-red">  </mark>                     Display who is online</p><p id="0222a789-a9ab-4cb4-855d-7bf5f96afe81" class="">
+</p><p id="6b506dca-04b9-4e5b-bd23-c33b8b7defb6" class="">
+</p><h2 id="2ae1ab4f-7c1f-41ca-8942-a264ffffae3d" class=""><span style="border-bottom:0.05em solid"><strong>View files</strong></span></h2><p id="7a231920-20e0-4da8-ac7e-49e84a21082a" class="">
+</p><p id="eca20182-10d9-47ef-b7ec-85945bb8eba1" class=""><mark class="highlight-red"><strong>ls</strong></mark>                                  Directory listing</p><p id="1d90f2ac-58fa-4ee7-a2a7-b9705fb5a64b" class="">
+</p><p id="52e9d0ed-1b99-494a-808a-0b4320eb8977" class=""><mark class="highlight-red"><strong>cat</strong></mark><mark class="highlight-red"> </mark><mark class="highlight-red"><strong>filename</strong></mark>               View file content</p><p id="de097086-1225-4517-af18-47785ae3ccfd" class="">
+</p><p id="dd286e52-da8c-4b70-b8f7-da3ccb8dc69c" class=""><mark class="highlight-red"><strong>less</strong></mark>                              View a file page by page</p><p id="8c536090-763f-48c9-9378-9c0b82730da2" class="">
+</p><p id="669d24a8-9b18-4675-8fe1-2dd331168834" class=""><mark class="highlight-red"><strong>more</strong></mark>                           Output the contents of file</p><p id="d3490f9e-1223-4a2c-91ed-e1775ddc4c01" class="">
+</p><p id="45cd2520-d7eb-4584-99b2-aca7c30b89b0" class=""><mark class="highlight-red"><strong>head</strong></mark>                            Output the first 10 lines of file</p><p id="518412a6-f964-437a-b5ad-75ae4e4424d4" class="">
+</p><p id="3bfa119d-fb40-4d74-bb26-53af01dcfd07" class=""><mark class="highlight-red"><strong>tail</strong></mark>                               Output the last 10 lines of file</p><p id="a51785cb-dcc5-4196-bba4-8eccc06df08c" class="">
+</p><p id="cff6bd30-8d8f-4996-8f13-aaa9bc0634ab" class=""><mark class="highlight-red"><strong>page</strong></mark>                            Display file page by page</p><p id="0b43a317-3f3d-4f45-b269-07923000a770" class="">
+</p><p id="a18b4877-3c2c-4b28-bdf5-3f289d18fc77" class="">
+</p><h2 id="a9666500-10d5-4ad8-a2f6-79ff038fd40f" class=""><span style="border-bottom:0.05em solid"><strong>Create &amp; Delete file/directory</strong></span></h2><p id="7ca55c49-6e94-46e7-a6a7-93c1b2c2d361" class="">
+</p><p id="fc30c807-abc6-4e23-b7e0-66f07b6c163b" class=""><mark class="highlight-red"><strong>touch</strong></mark><strong>                          </strong>Create a 0 bites file</p><p id="2fbb8b16-6292-479d-8193-7ebb6d6e9e65" class="">
+</p><p id="0dc64ecd-e026-4c96-942e-7749ba348fc2" class=""><mark class="highlight-red"><strong>cat &gt; filename</strong></mark><strong>          </strong>Create file and allow to write</p><p id="2ebd7055-4274-431c-82da-00b4de7796db" class="">
+</p><p id="205e2fee-ce62-4feb-8c01-1c7dc8ced654" class=""><mark class="highlight-red"><strong>nano</strong></mark><strong>                            </strong>Create a file if filename doesn’t exist</p><p id="ec6adc36-98be-4446-a6ec-59d914618c06" class="">
+</p><p id="9bb28dab-1a7e-4bf4-90f1-99b59bd563fd" class=""><mark class="highlight-red"><strong>vi</strong></mark><strong>                                  </strong>Create a file if filename doesn’t exist</p><p id="d60c30d1-c337-44d8-bb3d-ab496964a9a8" class="">
+</p><p id="e01b179f-c861-4bd8-963f-a1cef8759ba4" class=""><mark class="highlight-red"><strong>rm</strong></mark><strong>                                </strong>Remove a file</p><p id="e2c8a65c-99cd-4f40-896e-ef69e016aa82" class="">
+</p><p id="1f461e92-6e17-44fc-b3e7-645982ce7b86" class=""><mark class="highlight-red"><strong>mkdir</strong></mark><strong>                          </strong>Create a directory</p><p id="a3473b44-372a-49bb-af35-f62272c6f7e1" class="">
+</p><p id="c7da9198-f143-4b6a-ab08-5dea3287dd28" class=""><mark class="highlight-red"><strong>rmdir</strong></mark><strong>                           </strong>Remove a empty directory</p><p id="94021807-61e6-4627-a9fa-58d78f2cf036" class="">
+</p><p id="7c689d78-8289-4c89-be09-fbaf25a01c53" class=""><mark class="highlight-red"><strong>rm -rf</strong></mark><strong>                          </strong>Remove a directory</p><p id="1fbbdf13-ba49-4288-ae14-b3ce861f4176" class="">
+</p><p id="a00c7a78-3215-4e1c-a7b1-ec8e25627254" class="">
+</p><h2 id="829ab64f-6009-4e83-a53b-2f0a2259c741" class=""><span style="border-bottom:0.05em solid"><strong>Managing files or directories</strong></span></h2><p id="2582dd50-019d-47ad-8921-2406f5982a8d" class="">
+</p><p id="7b4b3893-30a9-4c4c-9246-8c02140cc710" class=""><mark class="highlight-red"><strong>cp</strong></mark><mark class="highlight-red"> </mark>                              Copy a file</p><p id="1e07c872-0d05-4bf1-a298-680895da8a7c" class="">
+</p><p id="5e53c01d-2a07-49b8-8c3d-3581d6720425" class=""><mark class="highlight-red"><strong>mv</strong></mark>                               Move a file</p><p id="afedef48-90ae-4782-b894-861fe6e67773" class="">
+</p><p id="55050ee0-4ed6-44df-b690-9f00d977d6de" class=""><mark class="highlight-red"><strong>find</strong></mark>                             Find a file</p><p id="baecc758-2f30-471f-9d52-d1e96ca9f920" class="">
+</p><p id="cff37466-f228-46f3-9234-6bff0329fb36" class=""><mark class="highlight-red"><strong>grep</strong></mark>                            Search for a pattern in a file</p><p id="ff8759f9-9c2d-470c-afb1-efbbe9c9335c" class="">
+</p><p id="04d2696b-9d1b-4b99-8d24-5c448156c6b7" class=""><mark class="highlight-red"><strong>cd</strong></mark>                                Switch between directories</p><p id="eb352c5b-8063-4f82-a60b-b30940c41cde" class="">
+</p><p id="1ef70445-f7d2-4c6d-969c-aae65458c487" class=""><mark class="highlight-red"><strong>diff</strong></mark>                              Find content difference in 2 files</p><p id="80fadc92-9155-4c1c-a973-c95c45cc0bbd" class="">
+</p><p id="7e110ee6-a262-4255-966a-60fa1f4c6391" class=""><mark class="highlight-red"><strong>sed</strong></mark>                              Search and replace particular pattern</p><p id="c38b4c10-5ad1-44ce-bd77-348bc9b71ceb" class="">
+</p><p id="cf05e5b6-d31d-4553-a04e-eefa56e04182" class=""><mark class="highlight-red"><strong>chmod</strong></mark>                        Change file permissions</p><p id="170bf064-79c5-40e4-accd-a1d72593fe5e" class="">
+</p><p id="46027661-9e32-4004-9b30-0f5e6d6bcf9e" class=""><mark class="highlight-red"><strong>chown</strong></mark>                         Change Ownership of a file</p><p id="cdb4cb44-9a6a-42bd-8477-6f2374eea254" class="">
+</p><p id="74d0e553-dc17-445b-9cd0-66a77dc82c94" class=""><mark class="highlight-red"><strong>file</strong></mark>                               Show what kind of file it is</p><p id="b9151780-1ee6-4ca2-aeb1-0d8ab051ac1f" class="">
+</p><p id="5825f7df-1334-4c4b-b750-c2a5e2dba450" class="">
+</p><h2 id="1656aecb-c3f8-4d06-a16b-758d813f2a1d" class=""><span style="border-bottom:0.05em solid"><strong>System Management</strong></span></h2><p id="406b7fdc-8359-4058-b810-5e28a9898c8f" class="">
+</p><p id="f5ee2e0a-c898-4f36-9811-ef2adca39948" class=""><mark class="highlight-red"><strong>history</strong></mark>                         List all commands executed by a user</p><p id="0b338159-b5cf-411a-bf74-af7648b06ff2" class="">
+</p><p id="4c058ca8-543a-43a5-b856-96fe8a32af00" class=""><mark class="highlight-red"><strong>free</strong></mark>                             Free memory of a server</p><p id="b58c779b-0548-4d56-a067-3b9f5bef93f4" class="">
+</p><p id="263406d1-7d80-45b4-ab9c-37352d291a76" class=""><mark class="highlight-red"><strong>/proc/meminfo</strong></mark>          Displays memory information</p><p id="da1a4892-1284-4e3f-9d5b-9a6ddf8a1a46" class="">
+</p><p id="09cdb7b0-ec9c-48ae-b9c7-149189de0f39" class=""><mark class="highlight-red"><strong>/proc/cpuinfo</strong></mark>             Displays CPU information</p><p id="1c0df198-575b-4b8f-b0d8-b7dc7ae8409d" class="">
+</p><p id="f282a6b9-b155-444a-9f6f-24535e3a2be7" class=""><mark class="highlight-red"><strong>uname -a</strong></mark>                    Show kernel information</p><p id="5853b7a2-2b93-48c1-9e23-a9a9bfb6a416" class="">
+</p><p id="06a344a9-12f6-43ea-8ae5-f49752209859" class=""><mark class="highlight-red"><strong>du</strong></mark>                                Show directory space usage</p><p id="3b574e4b-a8f9-4237-bd16-61c9ec0c3814" class="">
+</p><p id="ea477271-4e19-4fd2-84e6-7627e69c8ab4" class=""><mark class="highlight-red"><strong>whereis</strong></mark><mark class="highlight-red"> </mark>                      Show possible locations of app</p><p id="89f8786c-b28a-43e0-886f-db8b622a947c" class="">
+</p><p id="4e4e5a25-9353-45ee-ad39-df409823e7d6" class=""><mark class="highlight-red"><strong>which</strong></mark><mark class="highlight-red"> </mark>                         Show which app will be run by default</p><p id="f3675d1f-d1f7-49f1-b0d1-2cb0d458fa84" class="">
+</p><p id="22698f89-953e-4be3-af54-5bc8c7c21cc8" class="">
+</p><h2 id="8cca8496-99bb-446c-9af6-8ca2cbf95acb" class=""><span style="border-bottom:0.05em solid"><strong>Networking</strong></span></h2><p id="d3bd4600-1fbd-41c5-b7ce-dd3f32c52bc6" class="">
+</p><p id="8bc6fcc5-e711-418d-baf8-74155b9604f8" class=""><mark class="highlight-red"><strong>hostname</strong></mark>                    Lists host name of the server</p><p id="62ac364e-1707-4a73-8389-403b960219da" class="">
+</p><p id="f5e10853-825b-4c2a-a10a-536d47a55247" class=""><mark class="highlight-red"><strong>ping &lt;ip&gt;</strong></mark><mark class="highlight-red"> </mark>                    Availability of destination server over the network</p><p id="123f81da-a8e0-4989-918a-b0b06c7abde5" class="">
+</p><p id="00b45280-b754-4563-b9da-d85a97ce306c" class=""><mark class="highlight-red"><strong>wget</strong></mark><mark class="highlight-red"> </mark>                            Download packages/softwars onto Linux system</p><p id="a1d9681d-d0cd-4bc6-b576-b16e73cfc6f7" class="">
+</p><p id="c6a99360-1544-467d-bd66-849339ae3d11" class=""><mark class="highlight-red"><strong>ifconfig</strong></mark><mark class="highlight-red"> </mark>                       Lists IP address(es) of the server</p><p id="3782dca7-38ac-484f-b46f-ca23dd8864d0" class="">
+</p><p id="23167cbe-683a-4b30-af4c-2091a9470425" class=""><mark class="highlight-red"><strong>telnet</strong></mark><mark class="highlight-red"> </mark>                          Connect to remote host / check port availability status</p><p id="7c4c860b-89dc-4785-86ef-e955ca1e096f" class="">
+</p><p id="0d15f484-951a-4b73-8ea0-494051d2a9f5" class=""><mark class="highlight-red"><strong>curl</strong></mark>                               Acces the application as from browser</p><p id="bbd0e88e-c82d-4f1d-8399-41f7caba01f3" class="">
+</p><p id="b70d216a-75e8-4793-ab1b-90461d479961" class="">
+</p><h2 id="bc033c07-8900-4ac5-97b9-30277e32baa3" class=""><span style="border-bottom:0.05em solid"><strong>Process Management</strong></span></h2><p id="d090c7f2-0e32-423b-a174-76d89e1ed9d5" class="">
+</p><p id="b467c46b-b5f9-4c75-af9e-b8f86c333bf2" class=""><mark class="highlight-red"><strong>ps -ef</strong></mark><mark class="highlight-red"> </mark>                          List the process which are running in the system</p><p id="8e6d8918-2f7d-4229-8084-837a2f5c243c" class="">
+</p><p id="fd0c0d3b-a421-4d0c-834f-68ad1ecb8427" class=""><mark class="highlight-red"><strong>kill / kill -9</strong></mark><mark class="highlight-red"> </mark>                  Kill a process or service</p><p id="f3b01d6b-9e16-4333-a935-3a4b3fbd1a37" class="">
+</p><p id="162f37e8-5286-48ec-8359-d30d3eb27561" class=""><mark class="highlight-red"><strong>fg</strong></mark>                                 Run the program in the foreground</p><p id="bdf38262-c2ed-48f8-9905-69323746646f" class="">
+</p><p id="caa0bf14-62cb-4d6d-a8e1-08cce695ff51" class=""><mark class="highlight-red"><strong>bg</strong></mark>                                Run the service in the back group</p><p id="90d91ab5-85df-4094-afe0-405c03bdf30a" class="">
+</p><p id="116e491b-8c92-46bb-9045-f1171f7913c1" class=""><mark class="highlight-red"><strong>top</strong></mark>                               List top 20 process which are consuming more CPU</p><p id="d005e3ec-e14b-459e-bd44-15844f090d0f" class="">
+</p><p id="a0fdcdf5-4655-4ace-ac75-3f903ed10eaf" class="">
+</p><h2 id="21709179-cfc3-4390-b621-dfff3bb9757d" class=""><span style="border-bottom:0.05em solid"><strong>Archiving files or directories</strong></span></h2><p id="5122773b-142e-41fa-b28e-4c4e4c3b3fb4" class="">
+</p><p id="22283c71-da37-432d-8bd9-636e7184ee7a" class=""><mark class="highlight-red"><strong>gzip</strong></mark>                             Create a compressed file</p><p id="42c4ccae-9f54-451b-b1cf-6a63df809b4f" class="">
+</p><p id="9d01d97b-dfd8-4dcb-8f67-6b2f550c0a34" class=""><mark class="highlight-red"><strong>gunzip</strong></mark>                         Unzip a file</p><p id="62050f60-abee-4b46-9f40-29aeecc0f671" class="">
+</p><p id="1967a468-4d0b-4938-ba8e-dfd01dfccdbe" class=""><mark class="highlight-red"><strong>tar</strong></mark>                                Extract tar file</p></div></article></body></html>
